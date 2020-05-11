@@ -1,2 +1,7 @@
 # NLMT_Nature2020
-Bayesian analysis code for NLMT Nature paper
+ 
+# Bayesian analysis code for the National Lung Matrix Trial 2020 
+# data snapshot date 2019-12-16 
+# EudraCT number: 2014-000814-73 
+# ISRCTN number: 38344105 
+# ClinicalTrials.gov NCT02664935
