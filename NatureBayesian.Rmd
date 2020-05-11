@@ -1,0 +1,360 @@
+---
+title: "Nature Bayesian"
+author: Peter Fletcher
+Date: 11 May 2020
+output: pdf_document
+---
+
+# REMEMBER all file paths should be altered to match the file paths you are using!
+
+# Libraries and source code
+```{r}
+library(pscl)
+library(dplyr)
+library(survival)
+library(readstata13)
+# set working directory
+
+```
+
+# Functions 
+## Parameters 
+* n - total No. pts
+* s - number of additional successes REQUIRED after interim for overall GO
+* s0 - number of interim success'
+* f0 - number of interim failures
+* a - beta prior parameter
+* b - beta prior parameter
+
+## posterior predictive probability
+```{r}
+post_pred <- function(n, s, s0, f0, a, b){
+  prob <- choose(s + (n - s - s0 - f0), s) * beta(s + s0 + a, (n - s - s0 - f0) + f0 + b) / beta(s0 + a, f0 + b)
+  return(prob) 
+}
+```
+
+## posterior predictive probability of trial 'success' 
+```{r}
+post_pred_suc <- function(n, s, s0, f0, a, b){
+  results <- sapply(s:(n - s0 - f0), post_pred, n = n, s0 = s0, f0 = f0, a = a, b = b)
+  names(results) <- paste0('s = ', s:(n - s0 - f0))
+  prob<- sum(results)
+  #results <- round(results, digits = 5)
+  return(prob)
+}
+```
+
+
+
+# Load in data 
+```{r, rows.print=2000}
+
+data <- read.csv(file = 'H:/NLMT/DataForR_20191216.csv')
+data
+```
+
+# Analysis 
+```{r, rows.print=2000 }
+for(i in 1:23){
+  # Prior Parameters
+  a <- 1
+  b <- 1  
+  
+  # produce posteriors and save plots here:
+  setwd('H:/NLMT/pdf')
+ 
+  plotlim = seq(0.001, 1, by = 0.001)
+  
+  #OR
+  
+  # posterior probability true rate is > target rate
+  # no targets for Arm C as theis is not a primary outcome for those cohorts
+  data[i, 'OR_post'] <- round(pbeta(data$targetrate[i], 
+                                     a+data$OR_num[i], 
+                                     b +(data$OR_denom[i] - data$OR_num[i]), 
+                                     ncp = 0, lower.tail = FALSE, log.p = FALSE) , 3 )
+  
+  data[i, 'OR_PPoS'] <- round(post_pred_suc(s = (data$target[i] - data$OR_num[i]), n = 30,
+                                      s0 = data$OR_num[i], 
+                                      f0 = (data$OR_denom[i] - data$OR_num[i]),
+                                      a = 1 , b = 1) , 3)
+  
+  data[i, 'OR_q50']  <- round(qbeta(0.500, 
+                                    a + data$OR_num[i],
+                                    b + (data$OR_denom[i] - data$OR_num[i])), 3)
+  data[i, 'OR_q025'] <- round(qbeta(0.025, 
+                                    a + data$OR_num[i], 
+                                    b + (data$OR_denom[i] - data$OR_num[i])), 3)
+  data[i, 'OR_q975'] <- round(qbeta(0.975, 
+                                    a + data$OR_num[i], 
+                                    b + (data$OR_denom[i] - data$OR_num[i])), 3)
+  
+
+  denspost <- dbeta(plotlim, shape1 = a + data$OR_num[i], shape2 = b + (data$OR_denom[i] - data$OR_num[i]))
+
+  pdf( paste0('postOR_', data[i, 'CohortName'], '.pdf'),   width=16, height=9 )
+  plot(plotlim, denspost, xlab = paste0('postOR_', data[i, 'CohortName']) , main='', ylab = '' , type = 'l' ,  cex.lab=2, cex.axis=2)
+  abline(v = qbeta(0.5, shape1 = a + data$OR_num[i], shape2 = b + (data$OR_denom[i] - data$OR_num[i])), col = 4, lty = 2)
+ dev.off()
+  
+  #DCB
+ 
+  
+  # posterior probability true rate is > target rate
+  # no targets for Arm C as theis is not a primary outcome for those cohorts
+  data[i, 'DCB_post'] <- round(pbeta(data$targetrate[i], 
+                                     a+data$DCB_num[i], 
+                                     b +(data$DCB_denom[i] - data$DCB_num[i]), 
+                                     ncp = 0, lower.tail = FALSE, log.p = FALSE) , 3 )
+  
+
+  data[i, 'DCB_PPoS'] <- round(post_pred_suc(s = (data$target[i] - data$DCB_num[i]), n = 30,
+                                       s0 = data$DCB_num[i], 
+                                       f0 = (data$DCB_denom[i] - data$DCB_num[i]),
+                                       a = 1 , b = 1), 3)
+  data[i, 'DCB_q50']  <- round(qbeta(0.500, 
+                                    a + data$DCB_num[i],
+                                    b + (data$DCB_denom[i] - data$DCB_num[i])), 3)
+  data[i, 'DCB_q025'] <- round(qbeta(0.025, 
+                                    a + data$DCB_num[i], 
+                                    b + (data$DCB_denom[i] - data$DCB_num[i])), 3)
+  data[i, 'DCB_q975'] <- round(qbeta(0.975, 
+                                    a + data$DCB_num[i], 
+                                    b + (data$DCB_denom[i] - data$DCB_num[i])), 3)
+  
+  
+  denspost <- dbeta(plotlim, shape1 = a + data$DCB_num[i], shape2 = b + (data$DCB_denom[i] - data$DCB_num[i]))
+
+  pdf(paste0('postDCB_', data[i, 'CohortName'], '.pdf'),  width=16, height=9 )
+  plot(plotlim, denspost, xlab = paste0('postDCB_', data[i, 'CohortName']) , main='', ylab = '' , type = 'l' ,  cex.lab=2, cex.axis=2)
+  abline(v = qbeta(0.5, shape1 = a + data$DCB_num[i], shape2 = b + (data$DCB_denom[i] - data$DCB_num[i])), col = 4, lty = 2)
+  dev.off()
+ 
+}
+data
+```
+
+
+# PPoS code (for arm C)
+```{r}
+
+# function TTEPPoS generates PPoS for time to event outcomes
+
+TTEPPoS <- function(n, Y0, T0, r, a, b, crit_val, nsims, pthresh , xfu) {
+  
+  results <- rep(NA, nsims)
+  
+  #time_fu <- rep(NA, n)
+  #for(i in 1:n) {
+  #  time_fu[i] <- (1/r)*(n - i) + xfu
+  #}
+  
+  for(i in 1:nsims){
+    
+    # we have Y0 events so need n - Y0 events so sample n - Y0 event times
+    
+    sim_events <- n - Y0
+    
+    #this is the total time including the time to date
+    #T1 <- T0
+    
+    #sample a mean from the interim posterior distribution
+    # keep as mean to be used as rate parameter in the exp distribution
+    int_post_mean_time <- rigamma(1, Y0, T0)
+    
+    
+    for(j in 1:sim_events ){
+      T1[j] <- rexp(1 , rate = 1/int_post_mean_time)
+    }
+    
+    #time_ev <- rexp(n , rate = log(2)/TM)
+    
+    #data <- data.frame(time_fu, time_ev)
+    #data <- mutate(data, Y = ifelse(time_ev < time_fu, 1, 0), Times =  ifelse(time_ev < time_fu, time_ev, time_fu))
+    #data <- select(data, Times, Y)
+    
+    Ysum <- n # we are assuming here events for all n
+    Tsum <- sum(T1) 
+    Tsum <- Tsum + T0 # total survival time to date plus simulated
+    
+    prob <- pigamma(crit_val, a + Ysum, b + log(2)*Tsum) 
+    
+    
+    results[i] <- ifelse(prob < pthresh, 1, 0)
+    
+  }
+  
+  return(sum(results)/nsims )
+  
+} 
+
+```
+
+
+# calculate TTE PPoS
+```{r, rows.print=2000 }
+for(i in 1:19){
+  
+  # this section calculates Posteriors and Predictive Probability of Success for PFS and saves posterior plots here:
+  setwd('H:/NLMT/pdf')
+ 
+# generically true in the standard outcomes
+r=1
+a=0.001
+b=0.001
+crit_val=3
+nsims=100000   
+pthresh=0.5
+xfu=0
+n = 30
+plotlim = seq(0.001, 12, by = 0.1)
+
+# bespoke code for D2 D3 and G1 as their posteriors are off the 12 months scale
+#D2
+ if (data[i, 'CohortName'] == 'D2') {
+  plotlim = seq(0.001, 60, by = 0.1)
+}
+
+#D3
+ if (data[i, 'CohortName'] == 'D3') {
+  plotlim = seq(0.001, 60, by = 0.1)
+ }
+
+#G1
+ if (data[i, 'CohortName'] == 'G1') {
+  plotlim = seq(0.001, 60, by = 0.1)
+}
+ 
+
+# values change per cohort
+Y0 = data$PFS_events[i]
+T0 = data$PFS_time[i]
+T1 <- rep(NA, n-Y0)
+results <- rep(NA, nsims)
+
+# checking that there are any events
+ if  (Y0>0) {
+
+ data[i, 'PFS_PPoS'] <- round(TTEPPoS(n, Y0, T0, r, a, b, crit_val, nsims, pthresh , xfu) , 3 )
+ 
+ # posteriors and CI 
+ 
+
+  # median and percentiles of posterior
+  data[i, 'PFS_q50']  <- round(qigamma(.5, a + Y0, log(2)*T0 + b) , 3)
+  data[i, 'PFS_q025'] <- round(qigamma(.025, a + Y0, log(2)*T0 + b), 3)
+  data[i, 'PFS_q975'] <- round(qigamma(.975, a + Y0, log(2)*T0 + b), 3)
+
+  data[i, 'PFS_q010'] <- round(qigamma(.1, a + Y0, log(2)*T0 + b), 3)
+  data[i, 'PFS_q900'] <- round(qigamma(.9, a + Y0, log(2)*T0 + b), 3)
+
+  # Prob true value greater than critical value only really relevant for C
+  data[i, 'PFS_post']  <- round(pigamma(crit_val, a + Y0, log(2)*T0 + b) , 3)
+  
+  denspost <- densigamma(plotlim, alpha = a + Y0, beta = log(2)*T0 + b)
+
+  pdf(paste0('postPFS_', data[i, 'CohortName'], '.pdf'),  width=16, height=9 )
+  plot(plotlim, denspost, xlab = paste0('postPFS_', data[i, 'CohortName']) , main='', ylab = '' , type = 'l' ,  cex.lab=2, cex.axis=2)
+  abline(v = data[i, 'PFS_q50'] , col = 4, lty = 2)
+  dev.off()
+  
+ }
+
+
+}
+data
+```
+
+
+
+
+
+
+
+
+##  Write data 
+```{r}
+
+
+write.csv(data, file = "H:/NLMT/OutputFromR_20191216.csv")
+```
+
+
+
+
+
+
+
+```{r}
+
+# some extra subgroup analysis of smoking and histology
+
+data <- read.csv(file = 'H:/NLMT/SmokeSquamusForR_20191216.csv')
+data
+```
+
+
+# Analysis 
+```{r, rows.print=2000 }
+for(i in 1:6){
+  # Prior Parameters
+  a <- 1
+  b <- 1  
+  
+  setwd('H:/NLMT/')
+ 
+ # plotlim = seq(0.001, 1, by = 0.001)
+  
+  #OR
+ 
+  data[i, 'OR_q50']  <- round(qbeta(0.500, 
+                                    a + data$OR_num[i],
+                                    b + (data$OR_denom[i] - data$OR_num[i])), 3)
+  data[i, 'OR_q025'] <- round(qbeta(0.025, 
+                                    a + data$OR_num[i], 
+                                    b + (data$OR_denom[i] - data$OR_num[i])), 3)
+  data[i, 'OR_q975'] <- round(qbeta(0.975, 
+                                    a + data$OR_num[i], 
+                                    b + (data$OR_denom[i] - data$OR_num[i])), 3)
+  
+}
+
+
+
+write.csv(data, file = "H:/NLMT/SmokeSquamousFromR_20191216.csv")
+
+```
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
