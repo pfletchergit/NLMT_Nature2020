@@ -50,19 +50,19 @@ post_pred_suc <- function(n, s, s0, f0, a, b){
 # Load in data 
 ```{r, rows.print=2000}
 
-data <- read.csv(file = 'H:/NLMT/DataForR_20191216.csv')
+data <- read.csv(file = 'H:/NLMT/DataForR.csv')
 data
 ```
 
 # Analysis 
 ```{r, rows.print=2000 }
-for(i in 1:23){
+for(i in 1:19){
   # Prior Parameters
   a <- 1
   b <- 1  
   
   # produce posteriors and save plots here:
-  setwd('H:/NLMT/pdf')
+  setwd('H:/NLMT/Postplots')
  
   plotlim = seq(0.001, 1, by = 0.001)
   
@@ -168,12 +168,7 @@ TTEPPoS <- function(n, Y0, T0, r, a, b, crit_val, nsims, pthresh , xfu) {
       T1[j] <- rexp(1 , rate = 1/int_post_mean_time)
     }
     
-    #time_ev <- rexp(n , rate = log(2)/TM)
-    
-    #data <- data.frame(time_fu, time_ev)
-    #data <- mutate(data, Y = ifelse(time_ev < time_fu, 1, 0), Times =  ifelse(time_ev < time_fu, time_ev, time_fu))
-    #data <- select(data, Times, Y)
-    
+
     Ysum <- n # we are assuming here events for all n
     Tsum <- sum(T1) 
     Tsum <- Tsum + T0 # total survival time to date plus simulated
@@ -197,7 +192,7 @@ TTEPPoS <- function(n, Y0, T0, r, a, b, crit_val, nsims, pthresh , xfu) {
 for(i in 1:19){
   
   # this section calculates Posteriors and Predictive Probability of Success for PFS and saves posterior plots here:
-  setwd('H:/NLMT/pdf')
+  setwd('H:/NLMT/Postplots')
  
 # generically true in the standard outcomes
 r=1
@@ -238,7 +233,7 @@ results <- rep(NA, nsims)
 
  data[i, 'PFS_PPoS'] <- round(TTEPPoS(n, Y0, T0, r, a, b, crit_val, nsims, pthresh , xfu) , 3 )
  
- # posteriors and CI 
+ # posteriors and CrI 
  
 
   # median and percentiles of posterior
@@ -277,7 +272,7 @@ data
 ```{r}
 
 
-write.csv(data, file = "H:/NLMT/OutputFromR_20191216.csv")
+write.csv(data, file = "H:/NLMT/ResultsFromR.csv")
 ```
 
 
@@ -290,7 +285,7 @@ write.csv(data, file = "H:/NLMT/OutputFromR_20191216.csv")
 
 # some extra subgroup analysis of smoking and histology
 
-data <- read.csv(file = 'H:/NLMT/SmokeSquamusForR_20191216.csv')
+data <- read.csv(file = 'H:/NLMT/SmokeSquamusForR.csv')
 data
 ```
 
@@ -322,7 +317,7 @@ for(i in 1:6){
 
 
 
-write.csv(data, file = "H:/NLMT/SmokeSquamousFromR_20191216.csv")
+write.csv(data, file = "H:/NLMT/SmokeSquamousFromR.csv")
 
 ```
 
