@@ -2,7 +2,8 @@
 title: "Nature Bayesian"
 author: Peter Fletcher
 Date: 11 May 2020
-output: pdf_document
+output: pdf_document and csv
+Produces: Bayesian output from Cohort and subgroup data
 ---
 
 # REMEMBER all file paths should be altered to match the file paths you are using!
