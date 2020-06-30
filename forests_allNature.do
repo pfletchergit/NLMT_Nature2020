@@ -66,17 +66,7 @@ use "SmokeSquamousForForests"  , clear
 			ytitle("") ylabel(none ,  nogrid angle(0) ) /// 
 			xtitle("Bayesian estimate OR Rate (%)") xlabel(0(10)100) ///
 			legend(off) ///  
-			xline(0, lcolor(gs12)) ///			
-			xline(10, lcolor(gs12)) ///
-			xline(20, lcolor(gs12)) ///
-			xline(30, lcolor(gs12)) ///
-			xline(40, lcolor(gs12)) ///
-			xline(50, lcolor(gs12)) ///
-			xline(60, lcolor(gs12)) ///
-			xline(70, lcolor(gs12)) ///
-			xline(80, lcolor(gs12)) ///
-			xline(90, lcolor(gs12)) ///
-			xline(100, lcolor(gs12)) ///
+			xline( 0(10)100 , lcolor(gs12) ) ///
 			graphregion(color(white))   ///  
 			)  	///		
 		(dropline or_q975  y   if category=="PYC1" ///
@@ -147,17 +137,7 @@ replace y = 1 if category=="Squamous"
 			ytitle("") ylabel(none ,  nogrid angle(0) ) /// 
 			xtitle("Bayesian estimate OR Rate (%)") xlabel(0(10)100) ///
 			legend(off) ///  
-			xline(0, lcolor(gs12)) ///			
-			xline(10, lcolor(gs12)) ///
-			xline(20, lcolor(gs12)) ///
-			xline(30, lcolor(gs12)) ///
-			xline(40, lcolor(gs12)) ///
-			xline(50, lcolor(gs12)) ///
-			xline(60, lcolor(gs12)) ///
-			xline(70, lcolor(gs12)) ///
-			xline(80, lcolor(gs12)) ///
-			xline(90, lcolor(gs12)) ///
-			xline(100, lcolor(gs12)) ///
+			xline( 0(10)100 , lcolor(gs12) ) ///
 			graphregion(color(white))   ///  
 			)  	///		
 		(dropline or_q975  y   if category=="NonSquamous" ///
@@ -243,17 +223,7 @@ global module "C1234"
 			ytitle("") ylabel(none) ytick(none) /// 
 			xlabel(0(10)100 , labsize(large) ) /// 
 			legend(off) ///
-			xline(0, lcolor(gs12)) ///			
-			xline(10, lcolor(gs12)) ///			
-			xline(20, lcolor(gs12)) ///			
-			xline(30, lcolor(gs12)) ///
-			xline(40, lcolor(gs12)) ///
-			xline(50, lcolor(gs12)) ///
-			xline(60, lcolor(gs12)) ///
-			xline(70, lcolor(gs12)) ///			
-			xline(80, lcolor(gs12)) ///			
-			xline(90, lcolor(gs12)) ///			
-			xline(100, lcolor(gs12)) ///	
+			xline( 0(10)100 , lcolor(gs12) ) ///	
 			graphregion(color(white))   ///  
 			)  	///		
 		(dropline or_q975  y   if cohortname=="C2"  ///
@@ -283,7 +253,7 @@ global module "C1234"
 		(scatter y  or_q50  if cohortname=="C4" ///
 			, msize(*`C4') mcolor(black) msymbol(square)  aspect(0.3)  ) 
 		
-		graph save "Forests\\C1234_ForestOR.gph", replace 	
+			
 		graph export "Forests\\C1234_ForestOR.png" , replace		
 		graph export "Forests\\C1234_ForestOR.pdf" , replace		
 		
@@ -297,17 +267,7 @@ global module "C1234"
 			xlabel(0(10)100 , labsize(large) ) /// 
 			/// legend(off) ///
 			 legend(subtitle("95% credible interval")  order(  1 "Cohort open" 2 "Cohort closed" )   ) ///
-			xline(0, lcolor(gs12)) ///			
-			xline(10, lcolor(gs12)) ///			
-			xline(20, lcolor(gs12)) ///			
-			xline(30, lcolor(gs12)) ///
-			xline(40, lcolor(gs12)) ///
-			xline(50, lcolor(gs12)) ///
-			xline(60, lcolor(gs12)) ///
-			xline(70, lcolor(gs12)) ///			
-			xline(80, lcolor(gs12)) ///			
-			xline(90, lcolor(gs12)) ///			
-			xline(100, lcolor(gs12)) ///	
+			xline( 0(10)100 , lcolor(gs12) ) ///	
 			graphregion(color(white))   ///  
 			)  	///		
 		(dropline dcb_q975  y   if cohortname=="C2"  ///
@@ -337,7 +297,7 @@ global module "C1234"
 		(scatter y  dcb_q50  if cohortname=="C4" ///
 			, msize(*`C4') mcolor(black) msymbol(square)  aspect(0.3)  ) 
 		
-		graph save "Forests\\C1234_ForestDCB.gph", replace 	
+		
 		graph export "Forests\\C1234_ForestDCB.png" , replace		
 		graph export "Forests\\C1234_ForestDCB.pdf" , replace		
 		
@@ -350,15 +310,9 @@ global module "C1234"
 			ytitle("") ylabel(none) ytick(none) ///
 			xlabel(0(3)12 , labsize(large) ) /// 
 			legend(off) ///
-			xline(0, lcolor(gs12)) ///			
-			/// xline(1, lcolor(gs12)) ///			
-			/// line(2, lcolor(gs12)) ///			
+			xline(0, lcolor(gs12)) ///				
 			xline(3, lcolor(purple)) ///
-			/// xline(4, lcolor(gs12)) ///
-			/// xline(5, lcolor(gs12)) ///
-			xline(6, lcolor(gs12)) ///
-			/// xline(7, lcolor(gs12)) ///			
-			/// xline(8, lcolor(gs12)) ///			
+			xline(6, lcolor(gs12)) ///		
 			xline(9, lcolor(gs12)) ///			
 			xline(12, lcolor(gs12)) ///	
 			graphregion(color(white))   ///  
@@ -390,7 +344,7 @@ global module "C1234"
 		(scatter y  pfs_q50  if cohortname=="C4" ///
 			, msize(*`C4') mcolor(purple) msymbol(square)  aspect(0.3) ) 
 		
-		graph save "Forests\\C1234_ForestPFS.gph", replace   	
+		   	
 		graph export "Forests\\C1234_ForestPFS.png" , replace		
 		graph export "Forests\\C1234_ForestPFS.pdf" , replace		
 		
@@ -466,7 +420,6 @@ global module "ADG"
 			ytitle("") ylabel(none) ytick(none) /// 
 			xlabel(0(10)100 , labsize(large) ) /// 
 			legend(off) ///
-			/// 
 			xline(0, lcolor(gs12)) ///			
 			xline(10, lcolor(gs12)) ///			
 			xline(20, lcolor(gs12)) ///			
@@ -477,7 +430,7 @@ global module "ADG"
 			xline(70, lcolor(gs12)) ///			
 			xline(80, lcolor(gs12)) ///			
 			xline(90, lcolor(gs12)) ///			
-			xline(100, lcolor(gs12)) ///
+			xline(100, lcolor(gs12)) ///	
 			graphregion(color(white))   ///  
 			)  	///		
 		(dropline or_q975  y   if cohortname=="D1"  ///
@@ -527,9 +480,8 @@ global module "ADG"
 			, horizontal  base(`A1basedcb') ///   
 			color(blue) lpattern(solid)  msymbol(none)  lwidth(medthick)  ///  
 			ytitle("") ylabel(none) ytick(none) ///   
-			xlabel(0(10)100 , labsize(large) ) ///  
-			///  
-			 legend(subtitle("95% credible interval") order(  2 "Cohort open" 1 "Cohort closed" )   ) ///
+			xlabel(0(10)100 , labsize(large) ) ///   
+			legend(subtitle("95% credible interval") order(  2 "Cohort open" 1 "Cohort closed" )   ) ///
 			xline(0, lcolor(gs12)) ///			
 			xline(10, lcolor(gs12)) ///			
 			xline(20, lcolor(gs12)) ///			
@@ -540,7 +492,7 @@ global module "ADG"
 			xline(70, lcolor(gs12)) ///			
 			xline(80, lcolor(gs12)) ///			
 			xline(90, lcolor(gs12)) ///			
-			xline(100, lcolor(gs12)) ///
+			xline(100, lcolor(gs12)) ///	
 			graphregion(color(white))   ///  
 			)  	///		
 		(dropline dcb_q975  y   if cohortname=="D1"  ///
@@ -590,8 +542,7 @@ global module "ADG"
 			color(black) lpattern(solid)  msymbol(none)  ///  
 			ytitle("") ylabel(none) ytick(none) /// 
 			xlabel(0(6)48  , labsize(large) ) /// 
-			legend(off) ///
-			/// 
+			legend(off) /// 
 			xline(0, lcolor(gs12)) ///			
 			xline(3, lcolor(gs12)) ///
 			xline(6, lcolor(gs12)) ///
@@ -713,7 +664,6 @@ global module "B1F"
 			ytitle("") ylabel(none) ytick(none) ///  
 			xlabel(0(10)100 , labsize(large) ) ///  
 			legend(off) ///
-			///  
 			xline(0, lcolor(gs12)) ///			
 			xline(10, lcolor(gs12)) ///			
 			xline(20, lcolor(gs12)) ///			
@@ -774,7 +724,6 @@ global module "B1F"
 			color(blue) lpattern(solid)  msymbol(none)  lwidth(medthick)  ///  
 			ytitle("") ylabel(none) ytick(none) ///  
 			xlabel(0(10)100 , labsize(large) ) ///  
-			/// legend(off) ///
 			legend(subtitle("95% credible interval") order(  1 "Cohort open" 2 "Cohort closed" )   ) ///
 			xline(0, lcolor(gs12)) ///			
 			xline(10, lcolor(gs12)) ///			
@@ -961,17 +910,7 @@ global module "C56B2E2"
 			ytitle("") ylabel(none)  ytick(none)   ///   
 			xlabel(0(10)100 , labsize(large) ) ///  
 			legend(off) ///  
-			xline(0, lcolor(gs12)) ///			
-			xline(10, lcolor(gs12)) ///			
-			xline(20, lcolor(gs12)) ///			
-			xline(30, lcolor(gs12)) ///
-			xline(40, lcolor(gs12)) ///
-			xline(50, lcolor(gs12)) ///
-			xline(60, lcolor(gs12)) ///
-			xline(70, lcolor(gs12)) ///			
-			xline(80, lcolor(gs12)) ///			
-			xline(90, lcolor(gs12)) ///			
-			xline(100, lcolor(gs12)) ///	
+			xline( 0(10)100 , lcolor(gs12) ) ///	
 			graphregion(color(white))   /// 
 			)  	///		
 		(dropline or_q975  y   if cohortname=="C6"  ///
@@ -1022,17 +961,7 @@ global module "C56B2E2"
 			ytitle("") ylabel(none) ytick(none) /// 
 			xlabel(0(10)100 , labsize(large) ) /// 
 			legend(subtitle("95% credible interval") order(  1 "Cohort open" 2 "Cohort closed" )   ) ///
-			xline(0, lcolor(gs12)) ///			
-			xline(10, lcolor(gs12)) ///			
-			xline(20, lcolor(gs12)) ///			
-			xline(30, lcolor(gs12)) ///
-			xline(40, lcolor(gs12)) ///
-			xline(50, lcolor(gs12)) ///
-			xline(60, lcolor(gs12)) ///
-			xline(70, lcolor(gs12)) ///			
-			xline(80, lcolor(gs12)) ///			
-			xline(90, lcolor(gs12)) ///			
-			xline(100, lcolor(gs12)) ///	
+			xline( 0(10)100 , lcolor(gs12) ) ///	
 			graphregion(color(white))   /// 
 			)  	///		
 		(dropline dcb_q975  y   if cohortname=="C6"  ///
